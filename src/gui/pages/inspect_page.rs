@@ -107,7 +107,7 @@ pub fn inspect_page(sniffer: &Sniffer) -> Container<Message, StyleType> {
                 .align_y(Alignment::Center)
                 .align_x(Alignment::Center)
                 .padding(Padding::new(7.0).top(10).bottom(3))
-                .width(1042)
+                .width(1042 + 221 - 95)
                 .class(ContainerType::BorderedRound),
         );
 

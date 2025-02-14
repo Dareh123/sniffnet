@@ -25,6 +25,7 @@ pub enum ReportCol {
     DstPort,
     Proto,
     Service,
+    Process,
     Bytes,
     Packets,
 }
@@ -37,8 +38,9 @@ impl ReportCol {
         ReportCol::DstPort,
         ReportCol::Proto,
         ReportCol::Service,
+        ReportCol::Process,
         ReportCol::Bytes,
-        ReportCol::Packets,
+        // ReportCol::Packets,
     ];
 
     pub(crate) const FILTER_COLUMNS_WIDTH: f32 = 4.0 * SMALL_COL_WIDTH + 2.0 * LARGE_COL_WIDTH;
@@ -49,6 +51,7 @@ impl ReportCol {
             ReportCol::SrcPort | ReportCol::DstPort => port_translation(language).to_string(),
             ReportCol::Proto => protocol_translation(language).to_string(),
             ReportCol::Service => service_translation(language).to_string(),
+            ReportCol::Process => "Process".to_string(),
             ReportCol::Bytes => {
                 let mut str = bytes_translation(language).to_string();
                 str.remove(0).to_uppercase().to_string() + &str
@@ -92,6 +95,7 @@ impl ReportCol {
             }
             ReportCol::Proto => key.protocol.to_string(),
             ReportCol::Service => val.service.to_string(),
+            ReportCol::Process => val.process.clone(),
             ReportCol::Bytes => ByteMultiple::formatted_string(val.transmitted_bytes),
             ReportCol::Packets => val.transmitted_packets.to_string(),
         }
@@ -99,7 +103,7 @@ impl ReportCol {
 
     pub(crate) fn get_width(&self) -> f32 {
         match self {
-            ReportCol::SrcIp | ReportCol::DstIp => LARGE_COL_WIDTH,
+            ReportCol::SrcIp | ReportCol::DstIp | ReportCol::Process => LARGE_COL_WIDTH,
             _ => SMALL_COL_WIDTH,
         }
     }
@@ -113,7 +117,9 @@ impl ReportCol {
             1
         };
         match self {
-            ReportCol::SrcIp | ReportCol::DstIp => LARGE_COL_MAX_CHARS / reduction_factor,
+            ReportCol::SrcIp | ReportCol::DstIp | ReportCol::Process => {
+                LARGE_COL_MAX_CHARS / reduction_factor
+            }
             _ => SMALL_COL_MAX_CHARS / reduction_factor,
         }
     }
@@ -126,6 +132,7 @@ impl ReportCol {
             ReportCol::DstPort => FilterInputType::PortDst,
             ReportCol::Proto => FilterInputType::Proto,
             ReportCol::Service => FilterInputType::Service,
+            ReportCol::Process => FilterInputType::Process,
             ReportCol::Bytes | ReportCol::Packets => FilterInputType::Country, // just to not panic...
         }
     }

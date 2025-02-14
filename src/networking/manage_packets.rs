@@ -222,6 +222,7 @@ pub fn modify_or_insert_in_map(
     let now = Local::now();
     let mut traffic_direction = TrafficDirection::default();
     let mut service = Service::Unknown;
+    let mut process = "-".to_string();
 
     if !info_traffic_mutex.lock().unwrap().map.contains_key(key) {
         // first occurrence of key
@@ -252,12 +253,11 @@ pub fn modify_or_insert_in_map(
         // determine process
         if let Some(local_port) = get_local_port(&key, traffic_direction) {
             let processes = listeners::get_processes_by_port(local_port);
-            if let Ok(processes) = processes {
-                println!("Processes listening on port {local_port}:");
-                for process in processes {
-                    println!("\t--> {process}");
-                }
-            }
+            process = processes
+                .iter()
+                .flatten()
+                .next()
+                .map_or("?".to_string(), |p| p.name.to_owned());
         }
     };
 
@@ -287,6 +287,7 @@ pub fn modify_or_insert_in_map(
             initial_timestamp: now,
             final_timestamp: now,
             service,
+            process,
             traffic_direction,
             icmp_types: if key.protocol.eq(&Protocol::ICMP) {
                 HashMap::from([(icmp_type, 1)])

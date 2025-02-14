@@ -28,6 +28,8 @@ pub struct InfoAddressPortPair {
     pub final_timestamp: DateTime<Local>,
     /// Upper layer service carried by the associated address:port pair.
     pub service: Service,
+    /// Process using the local port of this connection.
+    pub process: String,
     /// Determines if the connection is incoming or outgoing
     pub traffic_direction: TrafficDirection,
     /// Types of the ICMP messages exchanged, with the relative count (this is empty if not ICMP)

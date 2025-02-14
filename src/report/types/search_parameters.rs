@@ -19,6 +19,8 @@ pub struct SearchParameters {
     pub proto: String,
     /// Service
     pub service: String,
+    /// Process
+    pub process: String,
     /// Country
     pub country: String,
     /// Domain
@@ -103,19 +105,21 @@ pub enum FilterInputType {
     PortDst,
     Proto,
     Service,
+    Process,
     Country,
     Domain,
     AsName,
 }
 
 impl FilterInputType {
-    pub const ALL: [FilterInputType; 9] = [
+    pub const ALL: [FilterInputType; 10] = [
         Self::AddressSrc,
         Self::PortSrc,
         Self::AddressDst,
         Self::PortDst,
         Self::Proto,
         Self::Service,
+        Self::Process,
         Self::Country,
         Self::Domain,
         Self::AsName,
@@ -151,6 +155,7 @@ impl FilterInputType {
             FilterInputType::PortDst => &search_params.port_dst,
             FilterInputType::Proto => &search_params.proto,
             FilterInputType::Service => &search_params.service,
+            FilterInputType::Process => &search_params.process,
             FilterInputType::Country => &search_params.country,
             FilterInputType::Domain => &search_params.domain,
             FilterInputType::AsName => &search_params.as_name,
@@ -182,6 +187,7 @@ impl FilterInputType {
             }
             FilterInputType::Proto => key.protocol.to_string(),
             FilterInputType::Service => value.service.to_string(),
+            FilterInputType::Process => value.process.clone(),
             FilterInputType::Country => r_dns_host.unwrap().1.country.to_string(),
             FilterInputType::Domain => r_dns_host.unwrap().0.to_string(),
             FilterInputType::AsName => r_dns_host.unwrap().1.asn.name.to_string(),
@@ -212,6 +218,10 @@ impl FilterInputType {
             },
             FilterInputType::Service => SearchParameters {
                 service: String::new(),
+                ..search_params.clone()
+            },
+            FilterInputType::Process => SearchParameters {
+                process: String::new(),
                 ..search_params.clone()
             },
             FilterInputType::Domain => SearchParameters {
@@ -257,6 +267,10 @@ impl FilterInputType {
             },
             FilterInputType::Service => SearchParameters {
                 service: new_value.trim().to_string(),
+                ..search_params.clone()
+            },
+            FilterInputType::Process => SearchParameters {
+                process: new_value,
                 ..search_params.clone()
             },
             FilterInputType::Domain => SearchParameters {
