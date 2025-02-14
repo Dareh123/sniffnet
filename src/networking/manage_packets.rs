@@ -249,6 +249,16 @@ pub fn modify_or_insert_in_map(
         );
         // determine upper layer service
         service = get_service(key, traffic_direction);
+        // determine process
+        if let Some(local_port) = get_local_port(&key, traffic_direction) {
+            let processes = listeners::get_processes_by_port(local_port);
+            if let Ok(processes) = processes {
+                println!("Processes listening on port {local_port}:");
+                for process in processes {
+                    println!("\t--> {process}");
+                }
+            }
+        }
     };
 
     let mut info_traffic = info_traffic_mutex
@@ -585,6 +595,13 @@ pub fn get_address_to_lookup(key: &AddressPortPair, traffic_direction: TrafficDi
     match traffic_direction {
         TrafficDirection::Outgoing => key.address2.clone(),
         TrafficDirection::Incoming => key.address1.clone(),
+    }
+}
+
+pub fn get_local_port(key: &AddressPortPair, traffic_direction: TrafficDirection) -> Option<u16> {
+    match traffic_direction {
+        TrafficDirection::Outgoing => key.port1,
+        TrafficDirection::Incoming => key.port2,
     }
 }
 
