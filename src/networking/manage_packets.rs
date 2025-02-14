@@ -251,13 +251,13 @@ pub fn modify_or_insert_in_map(
         // determine upper layer service
         service = get_service(key, traffic_direction);
         // determine process
-        if let Some(local_port) = get_local_port(&key, traffic_direction) {
+        if let Some(local_port) = get_local_port(key, traffic_direction) {
             let processes = listeners::get_processes_by_port(local_port);
             process = processes
-                .iter()
+                .into_iter()
                 .flatten()
                 .next()
-                .map_or("?".to_string(), |p| p.name.to_owned());
+                .map_or("?".to_string(), |p| p.name);
         }
     };
 
